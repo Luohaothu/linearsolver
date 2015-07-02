@@ -1,25 +1,25 @@
 #include <stdio.h>
 #include <time.h>
-
+#include "para.h"
 
 #define max(a,b) ((a>b)?a:b)
 #define abs(a) (((a)>0)?(a):-(a))
 int main()
 {
-	static double a[360][180][38][19];
-	static double b[360][180][38][19];
+	static double a[dim1][dim2][dim3][dim4];
+	static double b[dim1][dim2][dim3][dim4];
 	FILE *fp, *fp2, *fp3;
 	clock_t t1 = clock();
-	if ((fp=fopen("D:\\linear\\linearSolverData\\case1\\A.txt","r"))==NULL)
+	if ((fp=fopen(path_a,"r"))==NULL)
 	{
 		puts("Failed open A.txt");
 		return 0;
 	}
-	for (int i = 0; i < 360*180*38*19; i++)
+	for (int i = 0; i < dim1 * dim2 * dim3 * dim4; i++)
 	{
 		short int w, x, y, z;
 		fscanf(fp, "%d%d%d%d", &w, &x, &y, &z);
-		if (w >= 360 || w < 0 || x >= 180 || x < 0 || y >= 38 || y < 0 || z >= 19 || z < 0)
+		if (w >= dim1 || w < 0 || x >= dim2 || x < 0 || y >= dim3 || y < 0 || z >= dim4 || z < 0)
 		{
 			puts("Error bound\n");
 			return 0;
@@ -29,16 +29,16 @@ int main()
 			fscanf(fp, "%lf\n", &(a[w][x][y][z]));
 			//printf("%lf\n", a[w][x][y][z]);
 		}
-		if (i%(10*180*38*19)==0)
+		if (i%(180*38*19)==0)
 		{
-			printf("%d Finished read\n", i / (10 * 180 * 38 * 19));
+			printf("\r%5.2f%% Finished read", (double) i / (dim1 * dim2 * dim3 * dim4) * 100);
 		}
 	}
-	printf("Finished total reading.\n");
+	printf("\rFinished total reading.\n");
 	clock_t t2 = clock();
 	printf("Time for reading A : %f s\n", (double)(t2 - t1) / CLOCKS_PER_SEC);
 	fclose(fp);
-	if ((fp2 = fopen("D:\\linear\\linearSolverData\\case1\\A_bi.txt","wb"))==NULL)
+	if ((fp2 = fopen(path_a_bi,"wb"))==NULL)
 	{
 		puts("Failed open A_bi.txt");
 		return 0;
@@ -49,7 +49,7 @@ int main()
 	printf("Time for write : %f s", (double)(t1 - t2) / CLOCKS_PER_SEC);
 	fclose(fp2);
 	t1 = clock();
-	if ((fp3 = fopen("D:\\linear\\linearSolverData\\case1\\A_bi.txt","r"))==NULL)
+	if ((fp3 = fopen(path_a_bi,"r"))==NULL)
 	{
 		puts("Failed open A_bi.txt");
 		return 0;
@@ -58,7 +58,7 @@ int main()
 	fclose(fp3);
 	t2 = clock();
 	printf("Time for read A_bi : %f s\n", (double)(t2 - t1) / CLOCKS_PER_SEC);
-	fp3 = fopen("D:\\linear\\linearSolverData\\case1\\A_ascii.txt", "w");
+	fp3 = fopen(path_a_ascii, "w");
 
 	bool bo = true;
 	double diff = 0;
