@@ -188,13 +188,13 @@ int main()
 	bool bo = true;
 	double diff = 0;
 #pragma omp parallel for num_threads(8)
-	for (int i = 0; i < 360; i++)
+	for (int i = 0; i < dim1; i++)
 	{
-		for (int j = 0; j < 180; j++)
+		for (int j = 0; j < dim2; j++)
 		{
-			for (int k = 0; k < 38; k++)
+			for (int k = 0; k < dim3; k++)
 			{
-				for (int m = 0; m < 19; m++)
+				for (int m = 0; m < dim4; m++)
 				{
 					bo = ((a[i][j][k][m] == b[i][j][k][m]) && bo);
 					if (abs(a[i][j][k][m] - b[i][j][k][m])> diff)
