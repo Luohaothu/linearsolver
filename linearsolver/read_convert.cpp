@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <time.h>
-#include "para.h"
+#include "serial_IO_para.h"
 
 #define max(a,b) ((a>b)?a:b)
 #define abs(a) (((a)>0)?(a):-(a))
@@ -8,9 +8,10 @@ int main()
 {
 	static double a[dim1][dim2][dim3][dim4];
 	static double b[dim1][dim2][dim3][dim4];
+	//fp for ascii read, fp2 for bi write, fp3 for ascii write
 	FILE *fp, *fp2, *fp3;
 	clock_t t1 = clock();
-	if ((fp=fopen(path_a,"r"))==NULL)
+	if ((fp=fopen(path(A.txt),"r"))==NULL)
 	{
 		puts("Failed open A.txt");
 		return 0;
@@ -27,9 +28,8 @@ int main()
 		else
 		{
 			fscanf(fp, "%lf\n", &(a[w][x][y][z]));
-			//printf("%lf\n", a[w][x][y][z]);
 		}
-		if (i%(180*38*19)==0)
+		if (i%(dim2 * dim3 * dim4)==0)
 		{
 			printf("\r%5.2f%% Finished read", (double) i / (dim1 * dim2 * dim3 * dim4) * 100);
 		}
@@ -38,7 +38,7 @@ int main()
 	clock_t t2 = clock();
 	printf("Time for reading A : %f s\n", (double)(t2 - t1) / CLOCKS_PER_SEC);
 	fclose(fp);
-	if ((fp2 = fopen(path_a_bi,"wb"))==NULL)
+	if ((fp2 = fopen(path(A_bi),"wb"))==NULL)
 	{
 		puts("Failed open A_bi.txt");
 		return 0;
@@ -49,7 +49,7 @@ int main()
 	printf("Time for write : %f s", (double)(t1 - t2) / CLOCKS_PER_SEC);
 	fclose(fp2);
 	t1 = clock();
-	if ((fp3 = fopen(path_a_bi,"r"))==NULL)
+	if ((fp3 = fopen(path(A_bi),"r"))==NULL)
 	{
 		puts("Failed open A_bi.txt");
 		return 0;
@@ -58,7 +58,15 @@ int main()
 	fclose(fp3);
 	t2 = clock();
 	printf("Time for read A_bi : %f s\n", (double)(t2 - t1) / CLOCKS_PER_SEC);
-	fp3 = fopen(path_a_ascii, "w");
+	fp3 = fopen(path(A_ascii.txt), "w");
+	for (int i = 0; i < dim1; i++)
+	for (int j = 0; j < dim2; j++)
+	for (int k = 0; k < dim3; k++)
+	for (int m = 0; m < dim4; m++)
+		fprintf(fp3, "%hd   %hd   %hd   %hd   %2.30lf\n", i, j, k, m, b[i][j][k][m]);
+	fclose(fp3);
+	t1 = clock();
+	printf("Time for write A_ascii : %f s\n", (double)(t1 - t2) / CLOCKS_PER_SEC);
 
 	bool bo = true;
 	double diff = 0;
@@ -81,13 +89,12 @@ int main()
 						printf("diff = %g\n", abs(a[i][j][k][m] - b[i][j][k][m]));
 					}
 					diff = max(abs(a[i][j][k][m] - b[i][j][k][m]), diff);
-					fprintf(fp3, "%hd   %hd   %hd   %hd   %2.30lf\n", i, j, k, m, b[i][j][k][m]);
+					//fprintf(fp3, "%hd   %hd   %hd   %hd   %2.30lf\n", i, j, k, m, b[i][j][k][m]);
 				}
 			}
 		}
 	}
-	t1 = clock();
-	fclose(fp3);
+	t2 = clock();
 	
 	if (bo)
 	{
@@ -97,6 +104,6 @@ int main()
 	{
 		printf("Max diff : %10.14lf\n", diff);
 	}
-		printf("Time for checking : %f s\n", (double)(t1 - t2) / CLOCKS_PER_SEC);
+		printf("Time for checking : %f s\n", (double)(t2 - t1) / CLOCKS_PER_SEC);
 	return 0;
 }
