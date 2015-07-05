@@ -1,4 +1,5 @@
 #include "IO_test.h"
+#define max(a,b) (a>b?a:b)
 int main()
 {
 	//file pointer for read 
@@ -7,8 +8,8 @@ int main()
 	static double b[dim1][dim2][dim3];
 	static double x0[dim1][dim2][dim3];
 	static double p[dim1][dim2][dim3] = { 0 };
-	int err = convert();
-	if (err) return -1;
+	//int err = convert();
+	//if (err) return -1;
 #pragma omp parallel sections
 	{
 #pragma omp section
@@ -61,7 +62,9 @@ int main()
 		}
 	}
 	double sum = 0;
-#pragma omp parallel for num_threads(8) reduction(+:sum)
+	double max_err = 0;
+	double temp;
+//#pragma omp parallel for num_threads(8) reduction(+:sum)
 	for (int i = 0; i < dim1; i++)
 	{
 		for (int j = 0; j < dim2; j++)
@@ -74,6 +77,12 @@ int main()
 					p[i][j][k] -= a[i][j][k][m] * xvalue(x0, i, j, k, m);
 				}
 				sum += p[i][j][k] * p[i][j][k];
+				temp = max_err;
+				max_err = max(max_err, p[i][j][k] * p[i][j][k]);
+				if (max_err != temp)
+				{
+					printf("new max err at p[%d][%d][%d]: %2.10f\n", i, j, k, p[i][j][k]);
+				}
 			}
 		}
 	}
