@@ -12,17 +12,19 @@ int main()
 #pragma omp parallel sections
 	{
 #pragma omp section
-		r_fp1 = fopen(path(A_bi.part1), "r");
-		fread(&a, sizeof(a) / 4, 1, r_fp1);
-		fclose(r_fp1);
-		r_fp1 = fopen(path(b_bi.part1), "r");
-		fread(&b, sizeof(b) / 4, 1, r_fp1);
-		fclose(r_fp1);
-		r_fp1 = fopen(path(x0_bi.part1), "r");
-		fread(&x0, sizeof(x0) / 4, 1, r_fp1);
-		fclose(r_fp1);
-
+		{
+			r_fp1 = fopen(path(A_bi.part1), "r");
+			fread(&a, sizeof(a) / 4, 1, r_fp1);
+			fclose(r_fp1);
+			r_fp1 = fopen(path(b_bi.part1), "r");
+			fread(&b, sizeof(b) / 4, 1, r_fp1);
+			fclose(r_fp1);
+			r_fp1 = fopen(path(x0_bi.part1), "r");
+			fread(&x0, sizeof(x0) / 4, 1, r_fp1);
+			fclose(r_fp1);
+		}
 #pragma omp section
+		{
 		r_fp2 = fopen(path(A_bi.part2), "r");
 		fread(&a[dim1 / 4], sizeof(a) / 4, 1, r_fp2);
 		fclose(r_fp2);
@@ -32,28 +34,31 @@ int main()
 		r_fp2 = fopen(path(x0_bi.part2), "r");
 		fread(&x0[dim1 / 4], sizeof(x0) / 4, 1, r_fp2);
 		fclose(r_fp2);
-
+	}
 #pragma omp section
-		r_fp3 = fopen(path(A_bi.part3), "r");
-		fread(&a[dim1 / 2], sizeof(a) / 4, 1, r_fp3);
-		fclose(r_fp3);
-		r_fp3 = fopen(path(b_bi.part3), "r");
-		fread(&b[dim1 / 2], sizeof(b) / 4, 1, r_fp3);
-		fclose(r_fp3);
-		r_fp3 = fopen(path(x0_bi.part3), "r");
-		fread(&x0[dim1 / 2], sizeof(x0) / 4, 1, r_fp3);
-		fclose(r_fp3);
-
+		{
+			r_fp3 = fopen(path(A_bi.part3), "r");
+			fread(&a[dim1 / 2], sizeof(a) / 4, 1, r_fp3);
+			fclose(r_fp3);
+			r_fp3 = fopen(path(b_bi.part3), "r");
+			fread(&b[dim1 / 2], sizeof(b) / 4, 1, r_fp3);
+			fclose(r_fp3);
+			r_fp3 = fopen(path(x0_bi.part3), "r");
+			fread(&x0[dim1 / 2], sizeof(x0) / 4, 1, r_fp3);
+			fclose(r_fp3);
+		}
 #pragma omp section
-		r_fp4 = fopen(path(A_bi.part4), "r");
-		fread(&a[3 * dim1 / 4], sizeof(a) / 4, 1, r_fp4);
-		fclose(r_fp4);
-		r_fp4 = fopen(path(b_bi.part4), "r");
-		fread(&b[3 * dim1 / 4], sizeof(b) / 4, 1, r_fp4);
-		fclose(r_fp4);
-		r_fp4 = fopen(path(x0_bi.part4), "r");
-		fread(&x0[3 * dim1 / 4], sizeof(x0) / 4, 1, r_fp4);
-		fclose(r_fp4);
+		{
+			r_fp4 = fopen(path(A_bi.part4), "r");
+			fread(&a[3 * dim1 / 4], sizeof(a) / 4, 1, r_fp4);
+			fclose(r_fp4);
+			r_fp4 = fopen(path(b_bi.part4), "r");
+			fread(&b[3 * dim1 / 4], sizeof(b) / 4, 1, r_fp4);
+			fclose(r_fp4);
+			r_fp4 = fopen(path(x0_bi.part4), "r");
+			fread(&x0[3 * dim1 / 4], sizeof(x0) / 4, 1, r_fp4);
+			fclose(r_fp4);
+		}
 	}
 	double sum = 0;
 #pragma omp parallel for num_threads(8) reduction(+:sum)
