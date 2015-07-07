@@ -3,7 +3,7 @@
 //return x value according to index
 double xvalue(double x[dim1][dim2][dim3], int i, int j, int k, int p)
 {
-	switch (p)
+	switch (p + 1)
 	{
 	case 1: return x[i][j][k]; break;
 	case 2: return x[(i - 1) % dim1][j][k]; break;

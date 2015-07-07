@@ -8,8 +8,8 @@ int main()
 	static double b[dim1][dim2][dim3];
 	static double x0[dim1][dim2][dim3];
 	static double p[dim1][dim2][dim3] = { 0 };
-	//int err = convert();
-	//if (err) return -1;
+	int err = convert();
+	if (err) return -1;
 #pragma omp parallel sections
 	{
 #pragma omp section
