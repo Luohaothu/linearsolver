@@ -1,4 +1,6 @@
-#include "IO_test.h"
+#include <stdio.h>
+#include "parameters.h"
+//convert ascii file to binary file, and make partition
 int convert()
 {
 	static double a[dim1][dim2][dim3][dim4];
@@ -86,6 +88,7 @@ int convert()
 	}
 	printf("\rFinished total reading.\n");
 	fclose(r_fp);
+#if _QUARD_FILE_	//use 4-file or 2-file IO mode
 	//write A_bi
 	if (   (w_fp1 = fopen(path(A_bi.part1), "wb")) == NULL
 		|| (w_fp2 = fopen(path(A_bi.part2), "wb")) == NULL
@@ -140,6 +143,43 @@ int convert()
 	fclose(w_fp2);
 	fclose(w_fp3);
 	fclose(w_fp4);
-
+#else	//use 2-file mode
+	//write A_bi
+	if (   (w_fp1 = fopen(path(A_bi.part1), "wb")) == NULL
+		|| (w_fp2 = fopen(path(A_bi.part2), "wb")) == NULL)
+	{
+		puts("Failed open A_bi");
+		return -1;
+	}
+	fwrite(&a, sizeof(a) / 2, 1, w_fp1);
+	fwrite(&(a[dim1 / 2]), sizeof(a) / 2, 1, w_fp2);
+	printf("Successfully convert to binary file\n");
+	fclose(w_fp1);
+	fclose(w_fp2);
+	//write b_bi
+	if (   (w_fp1 = fopen(path(b_bi.part1), "wb")) == NULL
+		|| (w_fp2 = fopen(path(b_bi.part2), "wb")) == NULL)
+	{
+		puts("Failed open b_bi");
+		return -2;
+	}
+	fwrite(&b, sizeof(b) / 2, 1, w_fp1);
+	fwrite(&(b[dim1 / 2]), sizeof(b) / 2, 1, w_fp2);
+	printf("Successfully convert to binary file\n");
+	fclose(w_fp1);
+	fclose(w_fp2);
+	//write x0_bi
+	if (   (w_fp1 = fopen(path(x0_bi.part1), "wb")) == NULL
+		|| (w_fp2 = fopen(path(x0_bi.part2), "wb")) == NULL)
+	{
+		puts("Failed open x0_bi");
+		return -3;
+	}
+	fwrite(&x0, sizeof(x0) / 2, 1, w_fp1);
+	fwrite(&(x0[dim1 / 2]), sizeof(x0) / 2, 1, w_fp2);
+	printf("Successfully convert to binary file\n");
+	fclose(w_fp1);
+	fclose(w_fp2);
+#endif
 	return 0;
 }
